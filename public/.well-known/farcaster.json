@@ -1,0 +1,32 @@
+{
+  "accountAssociation": {
+    "header": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL",
+    "payload": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL",
+    "signature": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Dice Palace",
+    "homeUrl": "https://dice-palace.vercel.app",
+    "iconUrl": "https://dice-palace.vercel.app/icon.png",
+    "splashImageUrl": "https://dice-palace.vercel.app/splash.png",
+    "splashBackgroundColor": "#2a2520",
+    "subtitle": "Sic Bo on Base",
+    "description": "Classic Sic Bo dice game on Base. Place bets on Big, Small, Sum, Doubles and Triples. Record your best score on-chain.",
+    "primaryCategory": "games",
+    "tags": ["sic bo", "dice", "casino", "base", "onchain"],
+    "heroImageUrl": "https://dice-palace.vercel.app/og-image.png",
+    "screenshotUrls": [
+      "https://dice-palace.vercel.app/screenshot1.png",
+      "https://dice-palace.vercel.app/screenshot2.png",
+      "https://dice-palace.vercel.app/screenshot3.png"
+    ],
+    "tagline": "Roll the Dice on Base",
+    "ogTitle": "Dice Palace",
+    "ogDescription": "Classic Sic Bo on Base. Bet, roll 3 dice, record your score on-chain.",
+    "ogImageUrl": "https://dice-palace.vercel.app/og-image.png",
+    "noindex": false,
+    "requiredChains": ["eip155:8453"],
+    "requiredCapabilities": []
+  }
+}
