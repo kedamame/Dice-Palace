@@ -15,38 +15,30 @@ import { useFarcasterMiniApp } from '@/lib/farcaster';
 
 type GamePhase = 'betting' | 'rolling' | 'result' | 'gameover';
 
-const INITIAL_CHIPS = 1000;
-
 interface LastResult {
   won: boolean;
-  payout: number;
-  net: number;
   description: string;
 }
 
 export function SicBoGame() {
   const { isInMiniApp } = useFarcasterMiniApp();
 
-  const [chips, setChips] = useState(INITIAL_CHIPS);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<GamePhase>('betting');
   const [dice, setDice] = useState<Dice>([1, 1, 1]);
   const [animDice, setAnimDice] = useState<Dice>([1, 1, 1]);
   const [activeBet, setActiveBet] = useState<Bet | null>(null);
-  const [betAmount, setBetAmount] = useState(10);
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
 
   const rollingRef = useRef(false);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const canRoll = activeBet !== null && betAmount > 0 && betAmount <= chips && phase === 'betting';
+  const canRoll = activeBet !== null && phase === 'betting';
 
   const handleRoll = useCallback(() => {
     if (!canRoll || !activeBet || rollingRef.current) return;
     rollingRef.current = true;
 
     const capturedBet = activeBet;
-    const capturedAmount = betAmount;
-    const capturedChips = chips;
 
     setPhase('rolling');
 
@@ -57,20 +49,17 @@ export function SicBoGame() {
       if (count >= 14) {
         clearInterval(interval);
         const finalDice = rollDice();
-        const result = calculateResult(capturedBet, capturedAmount, finalDice);
-        const net = result.payout - capturedAmount;
-        const newChips = Math.max(0, capturedChips + net);
+        const result = calculateResult(capturedBet, 1, finalDice);
 
         setDice(finalDice);
         setAnimDice(finalDice);
-        setLastResult({ won: result.won, payout: result.payout, net, description: result.description });
-        setChips(newChips);
+        setLastResult({ won: result.won, description: result.description });
         setPhase('result');
 
         resultTimerRef.current = setTimeout(() => {
           resultTimerRef.current = null;
           rollingRef.current = false;
-          if (newChips <= 0) {
+          if (!result.won) {
             setPhase('gameover');
           } else {
             setRound(r => r + 1);
@@ -80,7 +69,7 @@ export function SicBoGame() {
         }, 2500);
       }
     }, 75);
-  }, [canRoll, activeBet, betAmount, chips]);
+  }, [canRoll, activeBet]);
 
   const handlePlayAgain = useCallback(() => {
     if (resultTimerRef.current) {
@@ -88,13 +77,11 @@ export function SicBoGame() {
       resultTimerRef.current = null;
     }
     rollingRef.current = false;
-    setChips(INITIAL_CHIPS);
     setRound(1);
     setPhase('betting');
     setDice([1, 1, 1]);
     setAnimDice([1, 1, 1]);
     setActiveBet(null);
-    setBetAmount(10);
     setLastResult(null);
   }, []);
 
@@ -121,11 +108,6 @@ export function SicBoGame() {
         </div>
         <div className="header-info">
           <div className="info-item">
-            <span className="info-label">CHIPS</span>
-            <span className="info-value">{chips.toLocaleString()}</span>
-          </div>
-          <div className="info-divider" />
-          <div className="info-item">
             <span className="info-label">ROUND</span>
             <span className="info-value">{round}</span>
           </div>
@@ -146,9 +128,7 @@ export function SicBoGame() {
         <div className={`result-banner${lastResult.won ? ' win' : ' lose'}`}>
           <span className="result-desc">{lastResult.description}</span>
           <span className="result-amount">
-            {lastResult.won
-              ? `+${lastResult.net.toLocaleString()}`
-              : `-${betAmount.toLocaleString()}`}
+            {lastResult.won ? 'WIN' : 'LOSE'}
           </span>
         </div>
       )}
@@ -162,10 +142,7 @@ export function SicBoGame() {
         )}
         <BettingPanel
           activeBet={activeBet}
-          betAmount={betAmount}
-          chips={chips}
           onBetChange={setActiveBet}
-          onAmountChange={setBetAmount}
           disabled={phase !== 'betting'}
         />
       </section>

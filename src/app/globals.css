@@ -99,11 +99,6 @@ html, body {
   font-weight: 600;
 }
 
-.info-divider {
-  width: 1px;
-  height: 26px;
-  background-color: var(--border);
-}
 
 /* ===== DICE SECTION ===== */
 .dice-section {
@@ -349,52 +344,6 @@ html, body {
 }
 .triple-any-btn .bet-detail { margin-top: 0; margin-left: 4px; }
 
-/* ===== AMOUNT SELECTOR ===== */
-.amount-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.amount-label {
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  color: var(--text-muted);
-}
-
-.amount-presets {
-  display: flex;
-  gap: 5px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.amount-presets::-webkit-scrollbar { display: none; }
-
-.amount-btn {
-  flex-shrink: 0;
-  padding: 7px 13px;
-  font-size: 13px;
-  font-family: var(--font-serif, Georgia, serif);
-  color: var(--text-secondary);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all 0.15s;
-  letter-spacing: 0.04em;
-}
-.amount-btn:hover:not(:disabled) {
-  color: var(--gold);
-  border-color: var(--gold-dim);
-}
-.amount-btn.selected {
-  color: var(--gold);
-  border-color: var(--gold);
-  background-color: rgba(200, 145, 74, 0.14);
-}
-.amount-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.max-btn { color: var(--gold-dim); }
 
 /* ===== ROLL BUTTON ===== */
 .roll-section {
