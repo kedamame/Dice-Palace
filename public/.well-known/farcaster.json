@@ -14,7 +14,7 @@
     "subtitle": "Sic Bo on Base",
     "description": "Classic Sic Bo dice game on Base. Place bets on Big, Small, Sum, Doubles and Triples. Record your best score on-chain.",
     "primaryCategory": "games",
-    "tags": ["sic bo", "dice", "casino", "base", "onchain"],
+    "tags": ["sicbo", "dice", "casino", "base", "onchain"],
     "heroImageUrl": "https://dice-palace.vercel.app/og-image.png",
     "screenshotUrls": [
       "https://dice-palace.vercel.app/screenshot1.png",

@@ -17,7 +17,7 @@ export const minikitConfig = {
     splashBackgroundColor: '#2a2520',
     homeUrl: ROOT_URL,
     primaryCategory: 'games',
-    tags: ['sic bo', 'dice', 'casino', 'base', 'onchain'],
+    tags: ['sicbo', 'dice', 'casino', 'base', 'onchain'],
     heroImageUrl: `${ROOT_URL}/og-image.png`,
     screenshotUrls: [
       `${ROOT_URL}/screenshot1.png`,
