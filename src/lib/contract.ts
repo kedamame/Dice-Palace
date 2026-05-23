@@ -1,5 +1,13 @@
-// Deploy contracts/DicePalaceScores.sol to Base and replace this address
-export const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000' as `0x${string}`;
+const _raw = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ?? '';
+const _ZERO = '0x0000000000000000000000000000000000000000';
+const _valid = /^0x[0-9a-fA-F]{40}$/.test(_raw);
+
+if (!_valid && typeof window === 'undefined') {
+  console.error('NEXT_PUBLIC_CONTRACT_ADDRESS is not a valid address:', _raw || '(empty)');
+}
+
+export const CONTRACT_ADDRESS = (_valid ? _raw : _ZERO) as `0x${string}`;
+export const IS_CONTRACT_DEPLOYED = _valid && _raw !== _ZERO;
 
 export const CONTRACT_ABI = [
   {

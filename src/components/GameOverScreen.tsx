@@ -9,6 +9,7 @@ import {
 } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { encodeRecordScore } from '@/lib/attribution';
+import { IS_CONTRACT_DEPLOYED } from '@/lib/contract';
 
 interface GameOverScreenProps {
   score: number;
@@ -59,7 +60,9 @@ export function GameOverScreen({ score, onPlayAgain, isInMiniApp }: GameOverScre
         </div>
 
         <div className="record-section">
-          {!isConnected ? (
+          {!IS_CONTRACT_DEPLOYED ? (
+            <p className="record-prompt">Score recording not available (contract not deployed)</p>
+          ) : !isConnected ? (
             <div className="wallet-connect">
               <p className="record-prompt">Connect wallet to record your score on Base</p>
               <div className="connector-list">
