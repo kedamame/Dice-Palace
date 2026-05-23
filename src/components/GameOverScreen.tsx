@@ -9,7 +9,6 @@ import {
 } from 'wagmi';
 import { base } from 'wagmi/chains';
 import { encodeRecordScore } from '@/lib/attribution';
-import { CONTRACT_ADDRESS } from '@/lib/contract';
 
 interface GameOverScreenProps {
   score: number;
@@ -24,11 +23,9 @@ export function GameOverScreen({ score, onPlayAgain, isInMiniApp }: GameOverScre
   const { sendTransaction, data: txHash, isPending: isSending, error: txError } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({ hash: txHash });
 
-  const isContractDeployed = CONTRACT_ADDRESS !== '0x0000000000000000000000000000000000000000';
   const isOnBase = chain?.id === base.id;
 
   const handleRecordScore = async () => {
-    if (!isContractDeployed) return;
     if (!isOnBase) {
       try {
         await switchChainAsync({ chainId: base.id });
@@ -61,67 +58,61 @@ export function GameOverScreen({ score, onPlayAgain, isInMiniApp }: GameOverScre
           <span className="score-value">{score}</span>
         </div>
 
-        {isContractDeployed ? (
-          <div className="record-section">
-            {!isConnected ? (
-              <div className="wallet-connect">
-                <p className="record-prompt">Connect wallet to record your score on Base</p>
-                <div className="connector-list">
-                  {connectors.map(c => (
-                    <button key={c.id} className="connector-btn" onClick={() => connect({ connector: c })}>
-                      {connectorName(c.id)}
-                    </button>
-                  ))}
-                </div>
+        <div className="record-section">
+          {!isConnected ? (
+            <div className="wallet-connect">
+              <p className="record-prompt">Connect wallet to record your score on Base</p>
+              <div className="connector-list">
+                {connectors.map(c => (
+                  <button key={c.id} className="connector-btn" onClick={() => connect({ connector: c })}>
+                    {connectorName(c.id)}
+                  </button>
+                ))}
               </div>
-            ) : isConfirmed ? (
-              <div className="tx-success">
-                <p className="tx-success-text">SCORE RECORDED ON-CHAIN</p>
-                {txHash && (
-                  <a
-                    href={`https://basescan.org/tx/${txHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tx-link"
-                  >
-                    View on Basescan
-                  </a>
-                )}
-              </div>
-            ) : (
-              <div className="record-action">
-                <p className="wallet-info">
-                  {address?.slice(0, 6)}...{address?.slice(-4)}
-                  {!isOnBase && <span className="chain-warning"> (not on Base)</span>}
-                </p>
-                <button
-                  className="record-btn"
-                  onClick={handleRecordScore}
-                  disabled={isSwitching || isSending || isConfirming}
+            </div>
+          ) : isConfirmed ? (
+            <div className="tx-success">
+              <p className="tx-success-text">SCORE RECORDED ON-CHAIN</p>
+              {txHash && (
+                <a
+                  href={`https://basescan.org/tx/${txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tx-link"
                 >
-                  {isSwitching
-                    ? 'SWITCHING TO BASE...'
-                    : isSending
-                    ? 'CONFIRM IN WALLET...'
-                    : isConfirming
-                    ? 'CONFIRMING...'
-                    : 'RECORD SCORE ON-CHAIN'}
-                </button>
-                {txError && (
-                  <p className="tx-error">
-                    {txError.message.length > 80
-                      ? txError.message.slice(0, 80) + '...'
-                      : txError.message}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        ) : (
-          <p className="record-prompt" style={{ textAlign: 'center', opacity: 0.5 }}>
-            Deploy the contract to enable on-chain score recording
-          </p>
-        )}
+                  View on Basescan
+                </a>
+              )}
+            </div>
+          ) : (
+            <div className="record-action">
+              <p className="wallet-info">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+                {!isOnBase && <span className="chain-warning"> (not on Base)</span>}
+              </p>
+              <button
+                className="record-btn"
+                onClick={handleRecordScore}
+                disabled={isSwitching || isSending || isConfirming}
+              >
+                {isSwitching
+                  ? 'SWITCHING TO BASE...'
+                  : isSending
+                  ? 'CONFIRM IN WALLET...'
+                  : isConfirming
+                  ? 'CONFIRMING...'
+                  : 'RECORD SCORE ON-CHAIN'}
+              </button>
+              {txError && (
+                <p className="tx-error">
+                  {txError.message.length > 80
+                    ? txError.message.slice(0, 80) + '...'
+                    : txError.message}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
         <button className="play-again-btn" onClick={onPlayAgain}>
           PLAY AGAIN
