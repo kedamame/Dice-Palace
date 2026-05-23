@@ -5,10 +5,14 @@ import { type Bet, type BetCategory, type DieFace, getSumPayoutLabel } from '@/l
 
 interface BettingPanelProps {
   activeBet: Bet | null;
+  betAmount: number;
+  tokens: number;
   onBetChange: (bet: Bet) => void;
+  onAmountChange: (amount: number) => void;
   disabled: boolean;
 }
 
+const AMOUNT_PRESETS = [1, 5, 10, 25];
 const DIE_VALUES: DieFace[] = [1, 2, 3, 4, 5, 6];
 const TABS: { id: BetCategory; label: string }[] = [
   { id: 'bigsmall', label: 'BIG/SMALL' },
@@ -37,7 +41,10 @@ function isBetSelected(activeBet: Bet | null, bet: Bet): boolean {
 
 export function BettingPanel({
   activeBet,
+  betAmount,
+  tokens,
   onBetChange,
+  onAmountChange,
   disabled,
 }: BettingPanelProps) {
   const [activeTab, setActiveTab] = useState<BetCategory>('bigsmall');
@@ -150,6 +157,28 @@ export function BettingPanel({
         )}
       </div>
 
+      <div className="amount-selector">
+        <span className="amount-label">BET AMOUNT</span>
+        <div className="amount-presets">
+          {AMOUNT_PRESETS.map(preset => (
+            <button
+              key={preset}
+              className={`amount-btn${betAmount === preset ? ' selected' : ''}`}
+              onClick={() => onAmountChange(Math.min(preset, tokens))}
+              disabled={disabled || tokens < preset}
+            >
+              {preset}
+            </button>
+          ))}
+          <button
+            className={`amount-btn max-btn${betAmount === tokens ? ' selected' : ''}`}
+            onClick={() => onAmountChange(tokens)}
+            disabled={disabled}
+          >
+            MAX
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

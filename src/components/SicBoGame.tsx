@@ -15,30 +15,39 @@ import { useFarcasterMiniApp } from '@/lib/farcaster';
 
 type GamePhase = 'betting' | 'rolling' | 'result' | 'gameover';
 
+const INITIAL_TOKENS = 100;
+
 interface LastResult {
   won: boolean;
+  net: number;
   description: string;
 }
 
 export function SicBoGame() {
   const { isInMiniApp } = useFarcasterMiniApp();
 
+  const [tokens, setTokens] = useState(INITIAL_TOKENS);
+  const [peakTokens, setPeakTokens] = useState(INITIAL_TOKENS);
   const [round, setRound] = useState(1);
   const [phase, setPhase] = useState<GamePhase>('betting');
   const [dice, setDice] = useState<Dice>([1, 1, 1]);
   const [animDice, setAnimDice] = useState<Dice>([1, 1, 1]);
   const [activeBet, setActiveBet] = useState<Bet | null>(null);
+  const [betAmount, setBetAmount] = useState(1);
   const [lastResult, setLastResult] = useState<LastResult | null>(null);
 
   const rollingRef = useRef(false);
   const resultTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const canRoll = activeBet !== null && phase === 'betting';
+  const canRoll = activeBet !== null && betAmount > 0 && betAmount <= tokens && phase === 'betting';
 
   const handleRoll = useCallback(() => {
     if (!canRoll || !activeBet || rollingRef.current) return;
     rollingRef.current = true;
 
     const capturedBet = activeBet;
+    const capturedAmount = betAmount;
+    const capturedTokens = tokens;
+    const capturedPeak = peakTokens;
 
     setPhase('rolling');
 
@@ -49,17 +58,22 @@ export function SicBoGame() {
       if (count >= 14) {
         clearInterval(interval);
         const finalDice = rollDice();
-        const result = calculateResult(capturedBet, 1, finalDice);
+        const result = calculateResult(capturedBet, capturedAmount, finalDice);
+        const net = result.payout - capturedAmount;
+        const newTokens = Math.max(0, capturedTokens + net);
+        const newPeak = Math.max(capturedPeak, newTokens);
 
         setDice(finalDice);
         setAnimDice(finalDice);
-        setLastResult({ won: result.won, description: result.description });
+        setTokens(newTokens);
+        setPeakTokens(newPeak);
+        setLastResult({ won: result.won, net, description: result.description });
         setPhase('result');
 
         resultTimerRef.current = setTimeout(() => {
           resultTimerRef.current = null;
           rollingRef.current = false;
-          if (!result.won) {
+          if (newTokens <= 0) {
             setPhase('gameover');
           } else {
             setRound(r => r + 1);
@@ -69,7 +83,7 @@ export function SicBoGame() {
         }, 2500);
       }
     }, 75);
-  }, [canRoll, activeBet]);
+  }, [canRoll, activeBet, betAmount, tokens, peakTokens]);
 
   const handlePlayAgain = useCallback(() => {
     if (resultTimerRef.current) {
@@ -77,11 +91,14 @@ export function SicBoGame() {
       resultTimerRef.current = null;
     }
     rollingRef.current = false;
+    setTokens(INITIAL_TOKENS);
+    setPeakTokens(INITIAL_TOKENS);
     setRound(1);
     setPhase('betting');
     setDice([1, 1, 1]);
     setAnimDice([1, 1, 1]);
     setActiveBet(null);
+    setBetAmount(1);
     setLastResult(null);
   }, []);
 
@@ -91,7 +108,7 @@ export function SicBoGame() {
   if (phase === 'gameover') {
     return (
       <GameOverScreen
-        rounds={round - 1}
+        score={peakTokens}
         onPlayAgain={handlePlayAgain}
         isInMiniApp={isInMiniApp}
       />
@@ -107,6 +124,11 @@ export function SicBoGame() {
           <div className="header-ornament">-</div>
         </div>
         <div className="header-info">
+          <div className="info-item">
+            <span className="info-label">TOKENS</span>
+            <span className="info-value">{tokens.toLocaleString()}</span>
+          </div>
+          <div className="info-divider" />
           <div className="info-item">
             <span className="info-label">ROUND</span>
             <span className="info-value">{round}</span>
@@ -128,7 +150,9 @@ export function SicBoGame() {
         <div className={`result-banner${lastResult.won ? ' win' : ' lose'}`}>
           <span className="result-desc">{lastResult.description}</span>
           <span className="result-amount">
-            {lastResult.won ? 'WIN' : 'LOSE'}
+            {lastResult.won
+              ? `+${lastResult.net.toLocaleString()}`
+              : `-${Math.abs(lastResult.net).toLocaleString()}`}
           </span>
         </div>
       )}
@@ -142,7 +166,10 @@ export function SicBoGame() {
         )}
         <BettingPanel
           activeBet={activeBet}
+          betAmount={betAmount}
+          tokens={tokens}
           onBetChange={setActiveBet}
+          onAmountChange={setBetAmount}
           disabled={phase !== 'betting'}
         />
       </section>

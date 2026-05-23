@@ -12,12 +12,12 @@ import { encodeRecordScore } from '@/lib/attribution';
 import { CONTRACT_ADDRESS } from '@/lib/contract';
 
 interface GameOverScreenProps {
-  rounds: number;
+  score: number;
   onPlayAgain: () => void;
   isInMiniApp: boolean;
 }
 
-export function GameOverScreen({ rounds, onPlayAgain, isInMiniApp }: GameOverScreenProps) {
+export function GameOverScreen({ score, onPlayAgain, isInMiniApp }: GameOverScreenProps) {
   const { address, isConnected, chain } = useAccount();
   const { connect, connectors } = useConnect();
   const { switchChainAsync, isPending: isSwitching } = useSwitchChain();
@@ -36,7 +36,7 @@ export function GameOverScreen({ rounds, onPlayAgain, isInMiniApp }: GameOverScr
         return;
       }
     }
-    const tx = encodeRecordScore(rounds);
+    const tx = encodeRecordScore(score);
     sendTransaction(tx);
   };
 
@@ -57,8 +57,8 @@ export function GameOverScreen({ rounds, onPlayAgain, isInMiniApp }: GameOverScr
         </div>
 
         <div className="gameover-score">
-          <span className="score-label">ROUNDS SURVIVED</span>
-          <span className="score-value">{rounds}</span>
+          <span className="score-label">PEAK TOKENS</span>
+          <span className="score-value">{score}</span>
         </div>
 
         {isContractDeployed ? (
