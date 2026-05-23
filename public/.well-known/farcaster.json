@@ -1,8 +1,8 @@
 {
   "accountAssociation": {
-    "header": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL",
-    "payload": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL",
-    "signature": "TODO_GENERATE_WITH_WARPCAST_MANIFEST_TOOL"
+    "header": "eyJmaWQiOjIxMTE4OSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweEFBZTM5NEQ1MWUyYzBhOTczNWUwQmI2NzdFMTJmMjE1MjVCRWI1NTIifQ",
+    "payload": "eyJkb21haW4iOiJkaWNlLXBhbGFjZS52ZXJjZWwuYXBwIn0",
+    "signature": "wGeKvBaaydSXy6NwCy3rOvTv9zKHvlelKRFmaTx1p5RQlpULfizp3Yn3Zq7Bryu8cqIPtcQF0soV0t+T84yVcRs="
   },
   "miniapp": {
     "version": "1",
