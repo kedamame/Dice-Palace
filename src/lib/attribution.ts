@@ -2,8 +2,7 @@ import { concatHex, encodeFunctionData, type Hex } from 'viem';
 import { Attribution } from 'ox/erc8021';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from './contract';
 
-// Replace with your actual builder code from Base Build dashboard (bc_xxxxxxxx)
-const BUILDER_CODE = 'bc_placeholder';
+const BUILDER_CODE = 'bc_c15ea14k';
 
 let _suffix: Hex | null = null;
 
